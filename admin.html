@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Key Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #0f0f1a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 500px; background: #1a1a2e; padding: 30px; border-radius: 16px; border: 1px solid #333; }
+        h2 { text-align: center; margin-bottom: 20px; color: #4a6cf7; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #aaa; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #0f0f1a; color: #fff; outline: none; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(135deg, #2a6adb, #1b4a9e); color: #fff; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: linear-gradient(135deg, #3b7bee, #2a6adb); }
+        .result { margin-top: 20px; padding: 15px; background: #1b4a9e33; border: 1px solid #2a6adb; border-radius: 8px; display: none; text-align: center; }
+        .result.show { display: block; }
+        .key-text { font-size: 1.2rem; font-weight: bold; color: #4ade80; letter-spacing: 2px; margin: 10px 0; user-select: all; }
+        .login-box { display: block; }
+        .admin-box { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- LOGIN ADMIN -->
+    <div id="login-box" class="login-box">
+        <h2>Admin Login</h2>
+        <div class="form-group">
+            <input type="password" id="admin-pass" placeholder="Masukkan Password Admin">
+        </div>
+        <button onclick="loginAdmin()">Masuk</button>
+    </div>
+
+    <!-- GENERATOR BOX -->
+    <div id="admin-box" class="admin-box">
+        <h2>Key Generator</h2>
+        <div class="form-group">
+            <label>Durasi Tier</label>
+            <select id="key-duration">
+                <option value="seconds">Detik (Testing)</option>
+                <option value="minutes">Menit</option>
+                <option value="hours">Jam</option>
+                <option value="days">Hari</option>
+                <option value="permanent">Permanen</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Jumlah (Angka)</label>
+            <input type="number" id="key-amount" value="1" min="1">
+            <small style="color:#666; font-size:0.75rem;">*Abaikan jika pilih Permanen</small>
+        </div>
+        <div class="form-group">
+            <label>Bonus Limit Fix (Tambahan)</label>
+            <input type="number" id="key-limit" value="10" min="1">
+            <small style="color:#666; font-size:0.75rem;">*Jumlah fix yang didapat user setelah redeem</small>
+        </div>
+        <button onclick="generateKey()">Generate Key Code</button>
+
+        <div id="result-box" class="result">
+            <p>Key Code Berhasil Dibuat:</p>
+            <div class="key-text" id="result-key">XXXX-XXXX</div>
+            <p style="font-size:0.8rem; color:#aaa;">Berikan kode ini ke user untuk diredeem.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // GANTI PASSWORD INI SESUKA LU
+    const ADMIN_PASS = "FEBZ-OWNR-3399"; 
+
+    function loginAdmin() {
+        const pass = document.getElementById('admin-pass').value;
+        if(pass === ADMIN_PASS) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('admin-box').style.display = 'block';
+        } else {
+            alert("Password Salah, woi!");
+        }
+    }
+
+    function generateKey() {
+        const durationType = document.getElementById('key-duration').value;
+        const amount = parseInt(document.getElementById('key-amount').value) || 0;
+        const limit = parseInt(document.getElementById('key-limit').value) || 0;
+
+        // Generate Random String (Format: XXXX-XXXX-XXXX)
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        for(let i=0; i<3; i++) {
+            for(let j=0; j<4; j++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            if(i < 2) key += '-';
+        }
+
+        // Hitung durasi dalam milidetik
+        let durationMs = 0;
+        if (durationType === 'seconds') durationMs = amount * 1000;
+        else if (durationType === 'minutes') durationMs = amount * 60 * 1000;
+        else if (durationType === 'hours') durationMs = amount * 60 * 60 * 1000;
+        else if (durationType === 'days') durationMs = amount * 24 * 60 * 60 * 1000;
+        else if (durationType === 'permanent') durationMs = -1; // -1 artinya permanen
+
+        // Simpan Key ke LocalStorage (biar bisa dibaca sama index.html)
+        const newKeyData = {
+            code: key,
+            durationType: durationType,
+            durationMs: durationMs,
+            bonusLimit: limit,
+            isUsed: false
+        };
+
+        let existingKeys = JSON.parse(localStorage.getItem('FEBZ_KEYS')) || [];
+        existingKeys.push(newKeyData);
+        localStorage.setItem('FEBZ_KEYS', JSON.stringify(existingKeys));
+
+        // Tampilkan
+        document.getElementById('result-box').classList.add('show');
+        document.getElementById('result-key').innerText = key;
+    }
+</script>
+</body>
+</html>
