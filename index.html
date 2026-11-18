@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FEBZ Fix - Panel Kontrol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at top, #1a1a2e, #0f0f1a 80%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(20, 20, 35, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 28px 20px;
+            animation: fadeUp 0.6s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(100, 150, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #4a6cf7, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ff3b30;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            vertical-align: middle;
+            margin-left: 6px;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.5);
+        }
+
+        .stats {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .stats .row { display: flex; justify-content: space-between; color: #b0b0c0; }
+        .stats .row .val { color: #ffffff; font-weight: 600; }
+        .stats .divider { margin: 12px 0; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
+        .stats .section-title {
+            font-weight: 600; color: #8899ff; margin-bottom: 4px;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .time { font-size: 0.8rem; color: #808090; margin-top: 12px; text-align: right; }
+
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .btn-row { display: flex; gap: 10px; }
+
+        .btn {
+            flex: 1; padding: 14px 16px; border: none; border-radius: 12px;
+            font-size: 0.9rem; font-weight: 600; color: white; cursor: pointer;
+            transition: all 0.3s ease; display: flex; align-items: center;
+            justify-content: center; gap: 8px; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            text-decoration: none;
+        }
+
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn:hover::after { left: 100%; }
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-red { background: linear-gradient(135deg, #d93838, #b81c1c); border: 1px solid rgba(255, 80, 80, 0.3); }
+        .btn-red:hover:not(:disabled) { box-shadow: 0 0 25px rgba(217, 56, 56, 0.5); }
+        .btn-blue { background: linear-gradient(135deg, #2a6adb, #1b4a9e); border: 1px solid rgba(80, 150, 255, 0.3); }
+        .btn-blue:hover { box-shadow: 0 0 25px rgba(42, 106, 219, 0.5); }
+        .btn-green { background: linear-gradient(135deg, #2a9e4a, #1b6a30); border: 1px solid rgba(80, 255, 120, 0.3); }
+        .btn-green:hover { box-shadow: 0 0 25px rgba(42, 158, 74, 0.5); }
+        .btn-gold { background: linear-gradient(135deg, #d9a021, #a87b14); border: 1px solid rgba(255, 200, 80, 0.3); }
+        .btn-gold:hover { box-shadow: 0 0 25px rgba(217, 160, 33, 0.5); }
+        .btn-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .btn-purple:hover { box-shadow: 0 0 25px rgba(139, 92, 246, 0.5); }
+
+        .menu-label { font-size: 0.8rem; color: #808090; margin-bottom: 8px; text-align: center; }
+
+        .panel { display: none; animation: fadeUp 0.4s ease-out; }
+        .panel.active { display: block; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px; padding: 18px; margin-bottom: 16px; transition: all 0.3s;
+        }
+        .card:hover { border-color: rgba(100, 150, 255, 0.2); background: rgba(255, 255, 255, 0.05); }
+        .card h3 { font-size: 0.95rem; color: #ffffff; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .card p { font-size: 0.85rem; color: #a0a0b0; line-height: 1.6; }
+
+        textarea, .input-massal, .select-sender, .input-redeem {
+            width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; padding: 14px; color: #fff; font-size: 0.9rem;
+            outline: none; resize: vertical; transition: 0.3s; margin-bottom: 10px;
+            font-family: 'Inter', monospace;
+        }
+        .input-massal { padding: 12px 14px; cursor: pointer; }
+        textarea:focus, .input-massal:focus, .select-sender:focus, .input-redeem:focus { border-color: #4a6cf7; box-shadow: 0 0 15px rgba(74, 108, 247, 0.15); }
+        .select-sender { padding: 12px 14px; cursor: pointer; }
+        .select-sender option { background: #1a1a2e; color: #fff; padding: 10px; }
+
+        .result-box {
+            margin-top: 16px; padding: 14px;
+            background: rgba(42, 158, 74, 0.1); border: 1px solid rgba(42, 158, 74, 0.3);
+            border-radius: 12px; display: none; animation: fadeUp 0.4s ease-out;
+            max-height: 300px; overflow-y: auto;
+        }
+        .result-box.show { display: block; }
+        .result-box.error { background: rgba(217, 56, 56, 0.1); border-color: rgba(217, 56, 56, 0.3); }
+        .result-box .res-title { color: #4ade80; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
+        .result-box.error .res-title { color: #ff6b6b; }
+        .result-box .res-item {
+            font-size: 0.85rem; color: #d0d0e0; padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .result-box .res-item:last-child { border-bottom: none; }
+
+        .loading { display: none; text-align: center; padding: 20px; }
+        .loading.show { display: block; }
+        .loading .bar {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden; margin-bottom: 8px;
+        }
+        .loading .bar .fill {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #4a6cf7, #a855f7);
+            transition: width 0.3s;
+        }
+        .loading p { font-size: 0.8rem; color: #808090; font-family: monospace; }
+
+        .footer {
+            text-align: center; font-size: 0.7rem; color: #606070;
+            margin-top: 16px; padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><span class="badge">Febz Fix</span></h1>
+    </div>
+
+    <!-- PANEL UTAMA -->
+    <div id="panel-utama" class="panel active">
+        <div class="stats">
+            <!-- Total Fix & Global Dihapus -->
+            <div class="section-title">— Informasi Tier</div>
+            <div class="row"><span>Paket</span> <span class="val" id="tier" style="color: #d9a021;">User</span></div>
+            <div class="row"><span>Limit Sisa</span> <span class="val" id="limit">0 Fix</span></div>
+            <div class="row"><span>Masa Aktif</span> <span class="val" id="expired-time" style="color: #4ade80;">-</span></div>
+            <div class="divider"></div>
+            <div class="section-title">Waktu Jakarta</div>
+            <div class="time" id="waktu">Memuat...</div>
+        </div>
+
+        <div class="btn-group">
+            <!-- Tombol Claim Trial (Hanya muncul kalau bisa claim) -->
+            <button id="btn-claim" class="btn btn-gold" onclick="claimTrial()" style="display: none;">🎁 Claim Trial (5x Fix)</button>
+            <div id="claim-timer-text" style="text-align: center; font-size: 0.85rem; color: #ff6b6b; display: none; margin-bottom: 5px;">Tunggu <span id="claim-timer">00:00:00</span> lagi buat claim</div>
+            
+            <button class="btn btn-red" id="btn-mulai-fix" onclick="mulaiFix()">🔴 Mulai Fix</button>
+            <div class="btn-row">
+                <button class="btn btn-blue" onclick="showPanel('panel-redeem')">🎁 Redeem Code</button>
+                <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-green">💬 Contact Support</a>
+            </div>
+            <button class="btn btn-purple" onclick="alert('Event spesial: Diskon 50% buat 10 user pertama!')">🎉 Event</button>
+        </div>
+
+        <div class="menu-label">» Pilih menu di bawah</div>
+    </div>
+
+    <!-- PANEL REDEEM -->
+    <div id="panel-redeem" class="panel">
+        <button class="btn btn-gold" onclick="showPanel('panel-utama')" style="margin-bottom:16px; width:100%;">← Kembali ke Menu</button>
+        <div class="card">
+            <h3>🎁 Redeem Key Code</h3>
+            <p>Masukkan kode yang lu dapet dari Owner buat nambah limit atau upgrade tier.</p>
+        </div>
+        <input type="text" id="input-redeem" class="input-redeem" placeholder="Contoh: A1B2-C3D4-E5F6" style="text-transform: uppercase;">
+        <button class="btn btn-blue" style="width:100%;" onclick="redeemKey()">Redeem Sekarang</button>
+        <div id="redeem-msg" style="margin-top: 10px; font-size: 0.85rem; text-align: center;"></div>
+    </div>
+
+    <!-- PANEL FIX -->
+    <div id="panel-fix" class="panel">
+        <button class="btn btn-gold" onclick="showPanel('panel-utama')" style="margin-bottom:16px; width:100%;">← Kembali ke Menu</button>
+
+        <div class="card">
+            <h3>📋 KIRIM NOMOR YANG INGIN DIPERBAIKI</h3>
+            <p>Silakan kirim nomor WhatsApp yang ingin diproses. Pastikan nomor sudah terdaftar dan lakukan pengecekan bio terlebih dahulu sebelum mengirim.</p>
+        </div>
+        <div class="card">
+            <h3>💡 Bisa mengirim beberapa nomor sekaligus</h3>
+            <p>Gunakan format 1 nomor per baris.</p>
+        </div>
+
+        <textarea id="input-nomor" placeholder="+628123456789&#10;+628987654321"></textarea>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <select id="select-sender" class="select-sender">
+                <option value="1">Server 1</option>
+                <option value="2">Server 2</option>
+                <option value="3">Server 3</option>
+                <option value="4">Server 4</option>
+                <option value="5">Server 5</option>
+            </select>
+            <input type="number" id="input-target" class="input-massal" value="1" min="1" max="10" placeholder="Jumlah">
+        </div>
+
+        <button id="btn-proses" class="btn btn-red" style="width:100%; margin-top:12px;" onclick="kirimMassal()">🚀 Kirim Request Fix</button>
+
+        <div class="loading" id="loading">
+            <div class="bar"><div class="fill" id="progress-fill"></div></div>
+            <p id="loading-text">Mengirim data... [0/1]</p>
+        </div>
+
+        <div class="result-box" id="result-box">
+            <div class="res-title" id="res-title">[✓] Request selesai</div>
+            <div id="res-list"></div>
+            <div style="margin-top: 12px;">
+                <button class="btn btn-red" style="width:100%;" onclick="resetFix()">🔴 Banding Lagi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL LIMIT HABIS -->
+    <div id="panel-limit" class="panel" style="text-align: center;">
+        <h2 style="color: #ff3b30; margin-bottom: 10px;">⚠️ LIMIT HABIS</h2>
+        <p style="margin-bottom: 20px; color: #b0b0c0;">Limit lu udah habis, woi. Silakan claim trial lagi (jika waktunya udah cukup) atau hubungi owner.</p>
+        <button class="btn btn-gold" onclick="showPanel('panel-utama')" style="width:100%; margin-bottom: 10px;">Kembali ke Menu (Cek Claim)</button>
+        <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-green" style="width:100%; margin-bottom: 10px;">💬 Hubungi Owner (WhatsApp)</a>
+        <button class="btn btn-blue" onclick="showPanel('panel-redeem')" style="width:100%;">🎁 Punya Kode? Redeem Disini</button>
+    </div>
+
+    <div class="footer">
+       system online
+    </div>
+</div>
+
+<!-- EMAILJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+    // ==========================================
+    // KONFIGURASI 5 AKUN EMAILJS
+    // ==========================================
+    const SENDER_ACCOUNTS = {
+        1: { publicKey: '1Jfodhea8Xg78SuyC', serviceId: 'service_u7ezfkq', templateId: 'template_zfq531e' },
+        2: { publicKey: 'EV3Cr7bcZkbJfMXsX', serviceId: 'service_ilz1na7', templateId: 'template_k1ezpff' },
+        3: { publicKey: 'hvkpeJPpPZkwQINOO', serviceId: 'service_utttbpp', templateId: 'template_hhzerhb' },
+        4: { publicKey: 'PUBLIC_KEY_4', serviceId: 'SERVICE_ID_4', templateId: 'TEMPLATE_ID_4' },
+        5: { publicKey: 'PUBLIC_KEY_5', serviceId: 'SERVICE_ID_5', templateId: 'TEMPLATE_ID_5' }
+    };
+
+    emailjs.init(SENDER_ACCOUNTS[1].publicKey);
+
+    // ==========================================
+    // SISTEM DATABASE LOKAL (LOCALSTORAGE)
+    // ==========================================
+    let userData = JSON.parse(localStorage.getItem('FEBZ_USER'));
+    const CLAIM_COOLDOWN = 3 * 60 * 60 * 1000; // 3 Jam dalam milidetik
+
+    // Inisialisasi User Baru
+    if (!userData) {
+        userData = {
+            tier: 'User',
+            limit: 0, // Awalnya 0, biar harus claim dulu
+            isPermanent: false,
+            expiredAt: 0,
+            lastClaim: 0 // Waktu claim terakhir (0 artinya belum pernah)
+        };
+        saveUserData();
+    }
+
+    function saveUserData() {
+        localStorage.setItem('FEBZ_USER', JSON.stringify(userData));
+        updateUI();
+    }
+
+    // Cek Claim Trial (Bisa atau Cooldown)
+    function checkClaimStatus() {
+        if (userData.isPermanent) return; // Permanen gak butuh claim
+
+        const now = Date.now();
+        const timeSinceLastClaim = now - userData.lastClaim;
+
+        if (timeSinceLastClaim >= CLAIM_COOLDOWN) {
+            // Bisa Claim
+            document.getElementById('btn-claim').style.display = 'flex';
+            document.getElementById('claim-timer-text').style.display = 'none';
+        } else {
+            // Cooldown
+            document.getElementById('btn-claim').style.display = 'none';
+            document.getElementById('claim-timer-text').style.display = 'block';
+            
+            const remaining = CLAIM_COOLDOWN - timeSinceLastClaim;
+            const h = Math.floor(remaining / (1000 * 60 * 60));
+            const m = Math.floor((remaining / 1000 / 60) % 60);
+            const s = Math.floor((remaining / 1000) % 60);
+            
+            document.getElementById('claim-timer').innerText = 
+                `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+    }
+
+    // Fungsi Claim Trial
+    function claimTrial() {
+        if (userData.isPermanent) return;
+
+        const now = Date.now();
+        if (now - userData.lastClaim >= CLAIM_COOLDOWN) {
+            userData.limit += 5;
+            userData.lastClaim = now;
+            saveUserData();
+            alert("✅ Claim Berhasil! Lu dapet 5x Fix. Cek limit lu.");
+        } else {
+            alert("Woi, tunggu cooldown habis dulu!");
+        }
+    }
+
+    // Cek Expired
+    function checkExpired() {
+        if (userData.isPermanent) return;
+        if (userData.expiredAt > 0 && Date.now() > userData.expiredAt) {
+            userData.tier = 'User';
+            userData.limit = 0; // Habis
+            userData.expiredAt = 0;
+            userData.isPermanent = false;
+            saveUserData();
+            alert("Masa aktif tier lu udah habis, woi!");
+        }
+    }
+
+    // Timer Loop
+    setInterval(() => {
+        checkClaimStatus();
+        checkExpired();
+        updateTimerUI();
+    }, 1000);
+
+    // UI UPDATE
+    function updateUI() {
+        document.getElementById('tier').innerText = userData.tier;
+        
+        const limitEl = document.getElementById('limit');
+        if (userData.isPermanent) {
+            limitEl.innerText = "Unlimited (Permanen)";
+            limitEl.style.color = "#4ade80";
+        } else {
+            limitEl.innerText = `${userData.limit} Fix`;
+        }
+        checkClaimStatus(); // Update tombol claim setiap UI berubah
+    }
+
+    function updateTimerUI() {
+        const timerEl = document.getElementById('expired-time');
+        if (userData.isPermanent) {
+            timerEl.innerText = "Permanen";
+        } else if (userData.expiredAt > 0) {
+            const diff = userData.expiredAt - Date.now();
+            if (diff > 0) {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                
+                if (d > 0) timerEl.innerText = `${d} Hari ${h} Jam`;
+                else if (h > 0) timerEl.innerText = `${h} Jam ${m} Menit`;
+                else if (m > 0) timerEl.innerText = `${m} Menit ${s} Detik`;
+                else timerEl.innerText = `${s} Detik`;
+            } else {
+                timerEl.innerText = "Expired";
+            }
+        } else {
+            timerEl.innerText = "-";
+        }
+    }
+
+    // Waktu Jakarta
+    function updateTime() {
+        const now = new Date();
+        const options = {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            timeZone: 'Asia/Jakarta', hour12: false
+        };
+        document.getElementById('waktu').innerText = now.toLocaleString('id-ID', options) + ' WIB';
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Navigasi
+    function showPanel(id) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Cek Limit Sebelum Fix
+    function mulaiFix() {
+        checkExpired();
+        
+        if (userData.limit <= 0 && !userData.isPermanent) {
+            showPanel('panel-limit');
+            return;
+        }
+        showPanel('panel-fix');
+    }
+
+    // REDEEM LOGIC
+    function redeemKey() {
+        const inputKey = document.getElementById('input-redeem').value.toUpperCase().trim();
+        const msgEl = document.getElementById('redeem-msg');
+        
+        if (!inputKey) {
+            msgEl.innerHTML = "<span style='color:#ff6b6b;'>Masukkan kodenya dulu, woi!</span>";
+            return;
+        }
+
+        let keys = JSON.parse(localStorage.getItem('FEBZ_KEYS')) || [];
+        const keyIndex = keys.findIndex(k => k.code === inputKey);
+
+        if (keyIndex === -1) {
+            msgEl.innerHTML = "<span style='color:#ff6b6b;'>Kode tidak valid / tidak ditemukan!</span>";
+            return;
+        }
+
+        const keyData = keys[keyIndex];
+
+        if (keyData.isUsed) {
+            msgEl.innerHTML = "<span style='color:#ff6b6b;'>Kode ini udah pernah dipake, woi!</span>";
+            return;
+        }
+
+        // Proses Redeem
+        keyData.isUsed = true;
+        keys[keyIndex] = keyData;
+        localStorage.setItem('FEBZ_KEYS', JSON.stringify(keys));
+
+        // Update Data User
+        userData.tier = "Premium";
+        userData.limit += keyData.bonusLimit;
+        
+        if (keyData.durationType === 'permanent') {
+            userData.isPermanent = true;
+            userData.expiredAt = 0;
+        } else {
+            if (userData.expiredAt > Date.now()) {
+                userData.expiredAt += keyData.durationMs;
+            } else {
+                userData.expiredAt = Date.now() + keyData.durationMs;
+            }
+        }
+
+        saveUserData();
+        msgEl.innerHTML = "<span style='color:#4ade80;'>✅ Berhasil! Tier lu udah di-upgrade.</span>";
+        document.getElementById('input-redeem').value = '';
+        setTimeout(() => showPanel('panel-utama'), 2000);
+    }
+
+    // KIRIM MASSAL
+    async function kirimMassal() {
+        checkExpired();
+
+        if (userData.limit <= 0 && !userData.isPermanent) {
+            alert('Limit lu habis, woi!');
+            showPanel('panel-limit');
+            return;
+        }
+
+        const input = document.getElementById('input-nomor').value.trim();
+        const target = parseInt(document.getElementById('input-target').value) || 1;
+        const senderChoice = document.getElementById('select-sender').value;
+        
+        const nomorList = input.split('\n').map(n => n.trim()).filter(n => n !== '');
+        const account = SENDER_ACCOUNTS[senderChoice];
+
+        if (!account || account.publicKey === 'PUBLIC_KEY_' + senderChoice) {
+            alert(`Woi, Sender ${senderChoice} belum di-konfigurasi!`);
+            return;
+        }
+
+        if (nomorList.length === 0) {
+            alert('Woi, kirim nomornya dulu, jangan kosong!');
+            return;
+        }
+
+        if (nomorList.length > userData.limit && !userData.isPermanent) {
+            alert(`Limit lu cuma sisa ${userData.limit}, gak cukup buat ${nomorList.length} nomor!`);
+            return;
+        }
+
+        const btn = document.getElementById('btn-proses');
+        const loading = document.getElementById('loading');
+        const progressFill = document.getElementById('progress-fill');
+        const loadingText = document.getElementById('loading-text');
+        const resultBox = document.getElementById('result-box');
+        const resTitle = document.getElementById('res-title');
+        const resList = document.getElementById('res-list');
+
+        btn.disabled = true;
+        loading.classList.add('show');
+        resultBox.classList.remove('show');
+        progressFill.style.width = '0%';
+
+        const nomorText = nomorList.join('\n');
+        const waktuKirim = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) + ' WIB';
+
+        let berhasil = 0;
+        let gagal = 0;
+
+        for (let i = 1; i <= target; i++) {
+            try {
+                await emailjs.send(account.serviceId, account.templateId, {
+                    nomor: nomorText,
+                    total: nomorList.length,
+                    waktu: waktuKirim,
+                    subject: `Banding Request #${i} - Febz (Sender ${senderChoice})`
+                }, account.publicKey);
+                berhasil++;
+            } catch (error) {
+                console.error(`Gagal ke-${i}:`, error);
+                gagal++;
+            }
+
+            const persen = Math.round((i / target) * 100);
+            progressFill.style.width = `${persen}%`;
+            loadingText.innerText = `Mengirim data... [${i}/${target}] (Sender ${senderChoice})`;
+
+            if (i < target) await new Promise(r => setTimeout(r, 2000));
+        }
+
+        loading.classList.remove('show');
+        resultBox.classList.remove('error');
+        if (gagal > 0 && berhasil === 0) resultBox.classList.add('error');
+        resultBox.classList.add('show');
+
+        if (berhasil > 0) {
+            resTitle.innerHTML = `[✓] Request selesai · ${berhasil} email terkirim<br>• Total ${nomorList.length} nomor`;
+            resList.innerHTML = '';
+            nomorList.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'res-item';
+                div.innerHTML = `[✓] ${n} › ID sukses<br><small style="color:#808090;">» Tunggu 30 detik baru login</small>`;
+                resList.appendChild(div);
+            });
+
+            // Kurangi Limit User
+            if (!userData.isPermanent) {
+                userData.limit -= nomorList.length;
+                if (userData.limit < 0) userData.limit = 0;
+            }
+            saveUserData();
+
+        } else {
+            resTitle.innerHTML = `[✗] Gagal Total`;
+            resList.innerHTML = `<div class="res-item" style="color:#ff6b6b;">Semua pengiriman gagal. Cek koneksi/config akun ini.</div>`;
+        }
+
+        document.getElementById('input-nomor').value = '';
+        btn.disabled = false;
+        
+        if (userData.limit <= 0 && !userData.isPermanent) {
+            setTimeout(() => showPanel('panel-limit'), 3000);
+        }
+    }
+
+    function resetFix() {
+        document.getElementById('input-nomor').value = '';
+        document.getElementById('result-box').classList.remove('show');
+        document.getElementById('result-box').classList.remove('error');
+        document.getElementById('loading').classList.remove('show');
+    }
+
+    // Jalankan UI pas load
+    updateUI();
+    checkClaimStatus();
+</script>
+
+</body>
+</html>
